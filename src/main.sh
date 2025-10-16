@@ -29,6 +29,7 @@ UNDERLINE="${ESC}[4m"
 
 # FUNCTIONS
 source "${SCRIPT_DIR}/lib/readFileToMap.sh"
+source "${SCRIPT_DIR}/lib/trim.sh"
 
 # CONSTANTS
 FILE_CONFIG="${SCRIPT_DIR}/config.cfg"
@@ -77,9 +78,13 @@ function main() {
 		for _ip in "${_available_ips[@]}"; do
 			
 			# get host - ask /etc/hosts
-			local _getent=$(getent hosts ${_ip})
-			local _host=${_getent#* } # Removes the part before the first space
-			local _dns=false
+			local _dns
+			local _getent
+			local _host
+			_dns=false
+			_getent=$(getent hosts ${_ip})
+			_host=${_getent#* } # remove the part before the first space
+			_host=$(trim ${_host}) # remove whitespace
 
 			# if host is empty ask the dns
 			if [[ -z ${_host} ]]; then
